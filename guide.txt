@@ -1,0 +1,246 @@
+# Spese di casa: getting started guide
+
+Guide version: 1.6.2. It applies to app version 1.6.2 and to the `Code.gs` script version 1.6. Versione italiana: `GUIDA.md` (nell'app: Impostazioni, "Guida").
+
+This guide is written to be followed by a person or by an AI assistant helping a person. Each step says what to do, what you should see at the end, and what to do if that does not happen.
+
+The app itself is in **Italian**. Button and screen names are written exactly as they appear, in Italian, followed by an English translation in parentheses. Google's own screens may appear in Italian or English depending on your account language, so both are given.
+
+## In short
+
+Spese di casa ("house expenses") is an app for keeping track of household costs: condominium fees (yearly budgets, instalments, final statements), electricity, gas and internet bills, local taxes (TARI and IMU), home works with tax deductions, things to ask the building manager, deadlines, vehicles and driving licences.
+
+It has three parts:
+
+1. **The app**: a website you install on your phone and computer. It is the same for everyone and contains no personal data.
+2. **The Google script** (`Code.gs`): a small program that each person puts in **their own** Google account. It connects the app to their own Google Drive and is protected by a **secret key** chosen by them.
+3. **The data**: a file `dati.json` in a folder called **Spese di casa** on **your** Google Drive, plus a summary Google Sheet that updates by itself.
+
+Whoever publishes the app cannot see your data. Your data lives only on your Drive.
+
+## What the kit contains
+
+- `GUIDA.md`: this guide in Italian (the same one shown in the app under Impostazioni, "Guida").
+- `GUIDE.md`: this guide in English.
+- `Code.gs`: the script to copy into your Google account.
+- `Versioni.txt`: version history (in Italian).
+- `dati-vuoti.json`: an empty data file. Only needed in special cases (see "Common problems"); normally do not use it.
+- `app/`: all the app files, to be published on GitHub Pages (see "Publishing the app on GitHub Pages"). Only the person who publishes the app needs them. If you use an app someone else has published, do not touch them.
+
+## What you need
+
+- A Google account (Gmail is fine).
+- A computer with a browser for steps 1 and 2. From step 3 on, a phone is enough.
+- The app address: `https://comevuoitu.github.io/spese-casa-app/`. If the person who gave you the kit gave you a different address, use that one. If you want to publish the app yourself, first follow "Publishing the app on GitHub Pages".
+- About 15 minutes.
+
+## Step 1: create the script in your Google account
+
+1. On a computer, open `https://script.google.com` and sign in with your Google account.
+2. Click **New project** (Nuovo progetto).
+3. At the top left, click **Untitled project** (Progetto senza titolo) and rename it `Spese di casa`.
+4. In the open file (`Code.gs` or `Codice.gs`), select all the text and delete it.
+5. Open the kit's `Code.gs` in a text editor, copy **all** of it and paste it in place of the deleted text.
+6. Find the line `const CHIAVE = 'SCRIVI-QUI-LA-TUA-CHIAVE';` and replace `SCRIVI-QUI-LA-TUA-CHIAVE` with a secret key you make up. (`CHIAVE` means "key".)
+   - Key rules: at least 8 characters, better 20 or more; only letters, digits and hyphens; no spaces, no apostrophes.
+   - Example of the correct format (do not use this one): `const CHIAVE = 'green-cat-thirty-seven-windows';`
+   - Write the key down somewhere safe: you will need it in step 3.
+7. Save: the floppy-disk icon, or Cmd+S on Mac, Ctrl+S on Windows.
+8. In the toolbar, in the function drop-down, choose `prova` ("test") and click **Run** (Esegui).
+9. Google asks for authorisation. This is normal: the script needs to create the folder and files on your Drive.
+   - Click **Review permissions** (Esamina autorizzazioni) and choose your account.
+   - If "Google hasn't verified this app" (Google non ha verificato questa app) appears: click **Advanced** (Avanzate), then **Go to Spese di casa (unsafe)** (Vai a Spese di casa (non sicura)). The script is yours and runs only in your account.
+   - Click **Allow** (Consenti).
+10. The "Execution log" (Log di esecuzione) appears at the bottom.
+
+**Expected result:** the log contains the line `Tutto pronto. Cartella "Spese di casa" creata su Google Drive. Ora apri l'app, collegala e scegli "Inizia da zero".` ("All set. Folder created on Google Drive. Now open the app, connect it and choose 'Start from scratch'.") and your Google Drive has an empty folder called **Spese di casa**.
+
+**If not:** if the log shows a red error, check that you pasted the whole file (it must start with `/**` and end with `}`) and try again from point 7.
+
+## Step 2: publish the script as a web app
+
+1. At the top right, click **Deploy** (Esegui il deployment), then **New deployment** (Nuovo deployment).
+2. Next to "Select type" (Seleziona tipo), click the gear icon and choose **Web app** (Applicazione web).
+3. Fill in:
+   - Description (Descrizione): `Spese di casa`
+   - Execute as (Esegui come): **Me** (your email address)
+   - Who has access (Chi ha accesso): **Anyone** (Chiunque)
+4. Click **Deploy** (Esegui il deployment). If it asks for authorisation again, repeat point 9 of step 1.
+5. A window shows a **URL** under "Web app" (Applicazione web). Click **Copy** (Copia) and keep it: this is the **script address**.
+   - The correct address starts with `https://script.google.com/macros/s/` and ends with `/exec`.
+   - Do not use the address under "Library" (Raccolta), if shown: that is something else.
+
+**Why "Anyone":** the app must be able to reach the script without a Google login. Your data is still protected by the key: without the right key the script returns no data.
+
+**Check:** paste the script address into the browser's address bar and open it. You should see a line like `{"ok":true,"messaggio":"Il ponte Spese di casa è attivo."}` ("The Spese di casa bridge is active"). If you see a Google login page or an error, "Who has access" is not set to "Anyone": redo step 2, creating a new deployment.
+
+## Step 3: connect the app and start
+
+1. On your phone or computer, open the app address: `https://comevuoitu.github.io/spese-casa-app/` (or the one you were given).
+2. The screen **Collega Google Drive** (Connect Google Drive) appears.
+   - In **Indirizzo dello script** (Script address), paste the URL ending in `/exec`.
+   - In **Chiave segreta** (Secret key), type the key from step 1, exactly (upper and lower case matter).
+   - Tap **Collega** (Connect).
+3. The first time, **Collegato! Ora i dati** (Connected! Now the data) appears. Tap **Inizia da zero** (Start from scratch).
+4. **Immobili e detrazioni** (Properties and deductions) opens. Fill in:
+   - Casa (Home): short name (e.g. `Casa`), address, details (e.g. unit, floor, condominium shares).
+   - **Ho anche un box o un posto auto** (I also have a garage or parking space): leave it ticked if you have one and fill in its details; untick it if you don't.
+   - **Mostra la sezione Veicoli** (Show the Vehicles section): leave it ticked to track cars, motorbikes and driving licences.
+   - Detrazioni (Deductions): one per line, in the form `name | percentage`, for example `Ristrutturazione 50% | 50` or `Bonus mobili | 50`. You can add them later.
+   - Tap **Salva** (Save).
+
+**Expected result:** **Salvato** (Saved) appears at the top right, and in the **Spese di casa** folder on your Google Drive the file `dati.json` and the sheet **Spese di casa (riepilogo)** (summary) appear.
+
+**On a second device** (for example the computer after the phone): open the app, enter the same script address and the same key, tap **Collega**. Your data appears by itself. Do not choose "Inizia da zero" on a Drive that already has data: the app will not offer it, because it finds `dati.json`.
+
+## Step 4: install the app
+
+The app also works in the browser, but once installed it opens like a normal app, full screen and even offline.
+
+- **iPhone and iPad:** open the app address in **Safari**, tap **Share** (Condividi; the square with an arrow), then **Add to Home Screen** (Aggiungi alla schermata Home).
+- **Android:** open the address in **Chrome**. In the app go to **Impostazioni** (Settings) and tap **Installa l'app su questo dispositivo** (Install the app on this device). If the button is not there, use Chrome's ⋮ menu, then **Add to Home screen** (Aggiungi a schermata Home) and **Install** (Installa).
+- **Mac:** open the address in **Safari**, then the **File** menu, **Add to Dock** (Aggiungi al Dock).
+- **Windows or Chrome on a computer:** open the address in Chrome or Edge and click the install icon in the address bar.
+
+## First steps in the app
+
+The bottom tab bar has **Home**, **Scadenze** (Deadlines), **Movimenti** (Transactions) and **Impostazioni** (Settings).
+
+- **Condominium:** on Home tap **Casa** (or **Box**), then **Nuova gestione** (New financial year). Enter the name (e.g. `2026-27`), the type and the budget lines, one per line in the form `item | amount`. Then, inside the year, use **Aggiungi rata** (Add instalment) for each instalment. When the final statement arrives, use **Aggiorna consuntivo** (Update final statement).
+- **Bills:** on Home tap electricity (Luce), gas (Gas) or internet (Internet), then **Nuova bolletta** (New bill).
+- **Local taxes, works, things to ask:** from the Home tiles (Tasse, Lavori, Da chiedere).
+- **Mark something as paid:** tap **Pagata** (Paid) next to it.
+- **Deadlines:** the **Scadenze** tab shows what is overdue and what is due within 30 days.
+- **Vehicles:** on Home tap **Veicoli**, then **Nuovo veicolo** (New vehicle), then deadlines, charging or refuelling, servicing, expenses, mileage. Road tax (Bollo), MOT (Revisione) and insurance (Assicurazione) entered as expenses with their expiry date become automatic deadlines.
+- **Driving licences:** in **Veicoli**, **Aggiungi patente** (Add licence): holder, number, categories (A, B or both, plus any others), issue date, expiry date, points.
+- **Excel:** in **Impostazioni**, **Scarica Excel completo** (Download full Excel). Each condominium year also has its own Excel.
+- **Names and addresses:** in **Impostazioni**, **Immobili e detrazioni**.
+
+## Sharing with your household
+
+To let another person use **the same data** (for example someone you live with), give them three things:
+
+1. the app address;
+2. the script address (ending in `/exec`);
+3. the key.
+
+Send the key in a separate message. With the key, anyone can read and change all the data. If two people edit at the same time, the app merges the changes.
+
+To revoke someone's access: change the key in the script and publish a new version (see below), then enter the new key on your own devices (**Impostazioni**, **Cambia collegamento**, "Change connection").
+
+To let someone use the app **with their own data**, send them this kit: they follow the guide from step 1 with their own Google account.
+
+## Backups and security
+
+- The script automatically saves a **weekly backup** of `dati.json` in the folder **Spese di casa/backup** and keeps the last year of backups.
+- In **Impostazioni**, **Mostra i backup** (Show backups), you can restore a backup. Before any restore the script saves a copy of the current data anyway.
+- In **Impostazioni**, **Scarica dati.json** (Download dati.json), you save a copy on the device.
+- Never write the key in the public app, on a website or in a public message.
+
+## Updating the script to a new version
+
+When you receive a new `Code.gs`:
+
+1. Open `https://script.google.com`, then the **Spese di casa** project.
+2. First copy your key from the line `const CHIAVE = '...';` and keep it aside.
+3. Delete all the text in `Code.gs` and paste the new one.
+4. Put your key back in the `const CHIAVE` line. Save.
+5. Click **Deploy** (Esegui il deployment), then **Manage deployments** (Gestisci deployment), then the **pencil** (Edit).
+6. Under **Version** (Versione) choose **New version** (Nuova versione) and click **Deploy** (Esegui il deployment).
+
+**Important:** do not create a "New deployment" to update. With "Manage deployments" the `/exec` address stays the same and you do not need to reconnect your devices. A new deployment changes the address.
+
+The script version is written in the first comment line of `Code.gs`. `Versioni.txt` says for each version whether the script needs updating ("Script Google: da aggiornare" means "update the Google script"; "non serve aggiornarlo" means "no update needed").
+
+## Publishing the app on GitHub Pages
+
+Only for the person who publishes the app (once, then at each new version). If you use an app published by someone else, skip this part. GitHub Pages is free and has no credits to run out.
+
+Before you start:
+
+- With a free account the repository must be **public**: anyone can read the app's code. That is fine, because the app contains no personal data. **Never upload** `dati.json`, `dati-vuoti.json`, `Code.gs` or any file containing the key.
+- The app address will be `https://USERNAME.github.io/spese-casa-app/`, where `USERNAME` is your GitHub account name and `spese-casa-app` the repository name.
+- Use **Chrome** on the computer to upload files: it lets you drag folders too.
+
+### First publication
+
+1. Go to `https://github.com` and create a free account if you don't have one (**Sign up**). Choose the username carefully: it becomes part of the app address.
+2. At the top right click **+**, then **New repository**.
+3. Fill in:
+   - **Repository name**: `spese-casa-app`
+   - Visibility: **Public**
+   - Leave everything else as it is (no README, no .gitignore, no licence).
+   - Click **Create repository**.
+4. On the empty repository page click the link **uploading an existing file** (or **Add file**, then **Upload files**).
+5. On your computer open the kit's `app` folder, select **everything inside it** (files and folders: `index.html`, `app.js`, `art.js`, `styles.css`, `sw.js`, `manifest.webmanifest`, `guida.txt`, `guide.txt`, `Versioni.txt`, `README.md`, and the folders `icons` and `lib`) and drag it onto the page. Do not drag the `app` folder itself, and do not drag the whole kit: `index.html` must end up at the root of the repository.
+6. Wait for the upload to finish, then click **Commit changes** at the bottom.
+7. Check: on the repository's main page you must see `index.html` and the folders `icons` and `lib` directly, with no `app` folder around them. If you see an `app` folder, you dragged the folder itself: upload its contents again as in point 5, then delete the `app` folder (open it, **⋯** menu at the top right, **Delete directory**).
+8. Click **Settings** (at the top of the repository), then **Pages** on the left.
+9. Under **Build and deployment**, set **Source** to **Deploy from a branch**. Under **Branch** choose `main` and the folder `/ (root)`, then click **Save**.
+10. Wait one to three minutes and reload the **Pages** page: **Your site is live at** appears at the top, with the app address.
+
+**Expected result:** opening the address (also in a private/incognito window) shows the **Collega Google Drive** screen. If you see "404", wait a few more minutes; if it stays, check point 7.
+
+### Publishing a new version
+
+1. Open the `spese-casa-app` repository on github.com.
+2. Click **Add file**, then **Upload files**.
+3. Drag everything inside the new version's `app` folder. Files with the same name are replaced.
+4. Click **Commit changes**.
+5. After a few minutes the site is updated. GitHub caches files for up to about 10 minutes, so devices may see the new version a little later. Close and reopen the app, even twice; the version number is shown in **Impostazioni**.
+
+The history of every upload stays in GitHub, in the repository's **Commits** tab. Keep the kit zip files as well.
+
+### Other services
+
+Any static hosting service works, with these rules: publish the **contents** of the `app/` folder with `index.html` at the root; the site must use **HTTPS** and be **public**, with no password or login (a private site also prevents installation on Android). Examples: **Cloudflare Pages** (Workers & Pages, Pages project, **Upload assets**) or **Netlify** (**Deploy manually**). Netlify's free plan has monthly credits: when they run out, the site is suspended until the next month.
+
+## Moving the app to a new address
+
+This happens if you switch service (for example from Netlify to GitHub Pages) or change name. The data and the script **do not change**: only the app address changes, and for your devices it is a new app.
+
+1. Publish the app at the new address and check that it opens (see above).
+2. On each device, **before** switching: open the old app and check that **Salvato** (Saved) is shown at the top, so no change is left unsent.
+3. On the same device open the new address, enter the usual **script address** and **key**, and tap **Collega**. Your data appears by itself. "Inizia da zero" is not needed and does not appear.
+4. Install the app from the new address (see "Step 4") and delete the old icon from the Home screen or the Dock.
+5. Do the same for everyone who uses the same data.
+6. When everyone has moved to the new address, you can delete the old site.
+
+You can find the script address again at `https://script.google.com`, project **Spese di casa**, **Deploy** (Esegui il deployment), **Manage deployments** (Gestisci deployment): it is the URL under **Web app** (Applicazione web). The key is in the script's `const CHIAVE` line.
+
+## Common problems
+
+| What you see | What to do |
+|---|---|
+| "L'indirizzo deve iniziare con https://script.google.com/macros/s/ e finire con /exec" (the address must start with … and end with /exec) | You pasted the wrong address. Copy the one under "Web app" (step 2, point 5). |
+| "Chiave sbagliata" (wrong key) | The key in the app differs from the one in the script. Check upper/lower case and spaces. |
+| "Nello script manca la chiave: cambiala nella prima riga e ripubblica" (the script has no key) | The script still contains `SCRIVI-QUI-LA-TUA-CHIAVE`. Set your key, save, and publish a new version (see "Updating the script"). |
+| "Risposta non valida: controlla l'indirizzo dello script e che sia pubblicato per Chiunque" (invalid response) | "Who has access" is not "Anyone", or the address is not the `/exec` one. Redo step 2. |
+| "Google Drive non raggiungibile" (Google Drive unreachable) | No network. The app keeps working and saves as soon as the network is back. |
+| "Collegato! Ora i dati" appears on a Drive that should already have data | The script belongs to a different Google account, or `dati.json` was moved or renamed. Check that `dati.json` is in **Spese di casa** on Drive. If you have a backup, use **Carica un dati.json** (Upload a dati.json). |
+| The Google Sheet does not show a new entry | In **Impostazioni** tap **Aggiorna il foglio Google** (Update the Google Sheet). |
+| Android says "This app can't be installed" (Questa app non può essere installata) | The app's site is private or requires a login. It must be public (see "Publishing the app on GitHub Pages", "Other services"). Then clear the site's data in Chrome and try again. |
+| The new GitHub address shows "404" | Wait a few minutes after point 9. If it stays, in **Settings**, **Pages** check that the source is `main` and `/ (root)`, and that `index.html` is at the root of the repository. |
+| On Netlify, a "Netlify" label sits at the bottom right and the app's tab bar is slightly higher | It is the badge of Netlify's free plan; the app leaves room for it on purpose. You can tap the badge and choose **Hide this badge**. There is no badge on GitHub Pages. |
+| After an update you still see the old version | Fully close the app and reopen it, even twice. The version is shown in **Impostazioni**. |
+
+`dati-vuoti.json` is only for when "Inizia da zero" does not work: in that case, on the "Collegato! Ora i dati" screen, tap **Carica un dati.json** and choose that file.
+
+## Technical reference (for AI assistants and the curious)
+
+Useful facts for helping someone set up or troubleshoot. Not needed for normal use.
+
+- The app is a static PWA (HTML, CSS, JavaScript) with no server of its own and no personal data in its code. All paths are relative, so it also works in a subfolder such as `USERNAME.github.io/spese-casa-app/`.
+- The in-app guide reads `guida.txt` (same text as `GUIDA.md`) or, in English, `guide.txt` (same text as `GUIDE.md`). The `.txt` extension stops GitHub Pages from turning the Markdown file into an HTML page.
+- The app calls the script with `POST` requests to the `/exec` address, with a JSON body sent as `text/plain` (so the browser skips the CORS preflight). The body contains `key` (the key) and `action`.
+- Script actions: `load` (read data), `save` (save the whole file, with version check), `sheet` (rebuild the summary sheet), `backups` (list backups), `restore` (restore). A `GET` request to the `/exec` address only returns "Il ponte Spese di casa è attivo." and serves as a check.
+- Script error responses: `{"error":"chiave"}` if the key does not match; `{"notFound":true}` if `dati.json` does not exist yet (the app then offers "Inizia da zero"); `{"conflict":true,...}` if another device saved in the meantime (the app merges the changes by itself).
+- Files on Google Drive: folder `Spese di casa` at the root of the Drive, containing `dati.json`, the sheet `Spese di casa (riepilogo)` and the subfolder `backup`.
+- On each device the app stores only the script address, the key and a copy of the data for offline use (the browser's local storage for that site). "Scollega questo dispositivo" (Disconnect this device) in Impostazioni erases all of this.
+- Structure of `dati.json`: `movimenti` (instalments, bills, taxes, expenses: each with `casa`, `tipo`, `voce`, `scadenza`, `importo`, `pagato`, `dataPag`, `conto`), `gestioni` (condominium years with budget `voci` and final figures), `promemoria` (things to ask), `conti` (payment accounts), `config` (names, addresses and details of the properties, deduction types, whether the garage and vehicle sections are shown), `garage` (vehicles, vehicle entries, monthly mileage, driving licences).
+- Property codes in the data: `casa1` (home), `box1` (garage), `altre` (other properties).
+- Rules to follow when helping someone:
+  1. Never ask for the key in a public channel and never write it in files that go on the website.
+  2. Do not edit `dati.json` by hand while the app is open on any device: changes may be lost. To correct data, use the app; to go back, use the backups.
+  3. To update the script always use **Manage deployments** and **New version**, never a new deployment, and keep the key.
+  4. The script must run as **Me** with access for **Anyone**; other combinations do not work with the app.

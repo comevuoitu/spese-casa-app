@@ -2,6 +2,11 @@ SPESE DI CASA - STORICO DELLE VERSIONI
 
 Accanto a ogni versione è indicato se va aggiornato anche lo script su Google (Code.gs).
 
+1.6.2 (25/11/2026)
+- Guida in due lingue: italiano e inglese. Nell'app, in Impostazioni, "Guida", si sceglie la lingua in alto; all'apertura si usa la lingua del dispositivo.
+- Nel kit: GUIDA.md (italiano) e GUIDE.md (inglese). README del repository GitHub in inglese.
+- Script Google: non serve aggiornarlo (resta la versione 1.6).
+
 1.6.1 (25/11/2026)
 - Pronta per GitHub Pages: la guida dentro l'app ora si legge dal file guida.txt (GitHub Pages trasformerebbe un file .md in una pagina web).
 - Guida aggiornata: pubblicazione su GitHub Pages passo per passo, pubblicazione di nuove versioni, spostamento dell'app su un nuovo indirizzo.

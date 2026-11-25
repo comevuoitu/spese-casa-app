@@ -1,6 +1,6 @@
 # Spese di casa: guida per iniziare
 
-Versione della guida: 1.6.1. Vale per l'app 1.6.1 e per lo script `Code.gs` 1.6.
+Versione della guida: 1.6.2. Vale per l'app 1.6.2 e per lo script `Code.gs` 1.6. English version: `GUIDE.md` (in the app: Impostazioni, "Guida", then "English").
 
 Questa guida è scritta per essere seguita da una persona oppure da un assistente AI che aiuta una persona. Ogni passaggio dice cosa fare, cosa si deve vedere alla fine e cosa fare se non succede. I nomi dei pulsanti sono scritti come compaiono sullo schermo, in italiano e, tra parentesi, in inglese, perché Google può mostrare l'una o l'altra lingua.
 
@@ -19,6 +19,7 @@ Chi gestisce l'app non vede i tuoi dati. I tuoi dati stanno solo sul tuo Drive.
 ## Cosa contiene il kit
 
 - `GUIDA.md`: questa guida (la stessa che si legge nell'app, in Impostazioni, "Guida").
+- `GUIDE.md`: la stessa guida in inglese.
 - `Code.gs`: lo script da copiare nel tuo account Google.
 - `Versioni.txt`: lo storico delle versioni.
 - `dati-vuoti.json`: un file di dati vuoto. Serve solo in casi particolari (vedi "Problemi comuni"); di solito non va usato.
@@ -167,9 +168,9 @@ Cose da sapere prima:
    - Lascia tutto il resto com'è (niente README, niente .gitignore, niente licenza).
    - Tocca **Create repository**.
 4. Nella pagina del repository vuoto tocca il link **uploading an existing file** (oppure **Add file**, poi **Upload files**).
-5. Apri sul computer la cartella `app` del kit, seleziona **tutto il suo contenuto** (file e cartelle: `index.html`, `app.js`, `art.js`, `styles.css`, `sw.js`, `manifest.webmanifest`, `guida.txt`, `Versioni.txt`, e le cartelle `icons` e `lib`) e trascinalo nella pagina. Non trascinare la cartella `app` intera: `index.html` deve finire alla radice del repository.
+5. Apri sul computer la cartella `app` del kit, seleziona **tutto il suo contenuto** (file e cartelle: `index.html`, `app.js`, `art.js`, `styles.css`, `sw.js`, `manifest.webmanifest`, `guida.txt`, `guide.txt`, `Versioni.txt`, `README.md`, e le cartelle `icons` e `lib`) e trascinalo nella pagina. Non trascinare la cartella `app` intera, e nemmeno tutto il kit: `index.html` deve finire alla radice del repository.
 6. Aspetta che finisca il caricamento, poi in fondo tocca **Commit changes**.
-7. Controllo: nella pagina principale del repository devi vedere `index.html` e le cartelle `icons` e `lib` subito, senza una cartella `app` intorno. Se vedi una cartella `app`, hai trascinato la cartella intera: ricomincia con un repository nuovo oppure sposta i file.
+7. Controllo: nella pagina principale del repository devi vedere `index.html` e le cartelle `icons` e `lib` subito, senza una cartella `app` intorno. Se vedi una cartella `app`, hai trascinato la cartella intera: carica di nuovo il suo contenuto come al punto 5, poi elimina la cartella `app` (aprila, menu **⋯** in alto a destra, **Delete directory**).
 8. Tocca **Settings** (in alto, nel repository), poi a sinistra **Pages**.
 9. In **Build and deployment**, alla voce **Source** scegli **Deploy from a branch**. Alla voce **Branch** scegli `main` e la cartella `/ (root)`, poi tocca **Save**.
 10. Aspetta da uno a tre minuti e ricarica la pagina **Pages**: in alto compare **Your site is live at** con l'indirizzo dell'app.
@@ -226,7 +227,7 @@ L'indirizzo dello script lo ritrovi in `https://script.google.com`, progetto **S
 Fatti utili per aiutare qualcuno a configurare o a risolvere un problema. Non servono per l'uso normale.
 
 - L'app è una PWA statica (HTML, CSS, JavaScript) senza server proprio. Non ha dati personali nel codice. Tutti i percorsi sono relativi, quindi funziona anche in una sottocartella come `NOMEUTENTE.github.io/spese-casa-app/`.
-- La guida dentro l'app legge `guida.txt` (stesso testo di `GUIDA.md`). Il nome `.txt` evita che GitHub Pages trasformi il file Markdown in una pagina HTML.
+- La guida dentro l'app legge `guida.txt` (stesso testo di `GUIDA.md`) oppure, in inglese, `guide.txt` (stesso testo di `GUIDE.md`). Il nome `.txt` evita che GitHub Pages trasformi il file Markdown in una pagina HTML.
 - L'app chiama lo script con richieste `POST` all'indirizzo `/exec`, con corpo JSON inviato come `text/plain` (così il browser non fa la richiesta preliminare CORS). Il corpo contiene `key` (la chiave) e `action`.
 - Azioni dello script: `load` (legge i dati), `save` (salva tutto il file, con controllo di versione), `sheet` (ricrea il foglio di riepilogo), `backups` (elenco dei backup), `restore` (ripristino). Una richiesta `GET` all'indirizzo `/exec` risponde solo con il messaggio "Il ponte Spese di casa è attivo." e serve come controllo.
 - Risposte di errore dello script: `{"error":"chiave"}` se la chiave non corrisponde; `{"notFound":true}` se `dati.json` non esiste ancora (l'app allora propone "Inizia da zero"); `{"conflict":true,...}` se un altro dispositivo ha salvato nel frattempo (l'app unisce le modifiche da sola).

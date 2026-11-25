@@ -2,7 +2,7 @@
 /* Spese di casa: PWA. Data live in Google Drive (dati.json) through a personal Apps Script; a Google Sheet copy is rebuilt after each change. */
 
 // ---------------------------------------------------------------- config & state
-const VERSION = "1.6.1";
+const VERSION = "1.6.2";
 const LS = { cfg: "spese.cfg", cache: "spese.cache" };
 const TEST = window.SPESE_TEST || null;
 
@@ -1164,10 +1164,12 @@ function mdLite(md) {
   });
   close(); return out.join("");
 }
-async function showGuide() {
+async function showGuide(lang) {
+  lang = lang || (S.guideLang) || (/^it\b/i.test(navigator.language || "it") ? "it" : "en"); S.guideLang = lang;
   let txt = "";
-  try { const r = await fetch("guida.txt", { cache: "no-cache" }); if (!r.ok) throw 0; txt = await r.text(); } catch (e) { return toast("Non riesco a leggere la guida"); }
-  openSheet(`<div class="guide">${mdLite(txt)}</div><div class="actions"><button class="btn" data-close>Chiudi</button></div>`);
+  try { const r = await fetch(lang === "en" ? "guide.txt" : "guida.txt", { cache: "no-cache" }); if (!r.ok) throw 0; txt = await r.text(); } catch (e) { return toast(lang === "en" ? "Cannot load the guide" : "Non riesco a leggere la guida"); }
+  openSheet(`<div class="seg" role="group" style="margin-bottom:6px"><button aria-pressed="${lang === "it"}" data-guide="it">Italiano</button><button aria-pressed="${lang === "en"}" data-guide="en">English</button></div>
+    <div class="guide">${mdLite(txt)}</div><div class="actions"><button class="btn" data-close>${lang === "en" ? "Close" : "Chiudi"}</button></div>`);
 }
 async function showVersions() {
   let txt = "";
@@ -1240,6 +1242,7 @@ document.addEventListener("click", async e => {
   const nb = t.closest("[data-newbill]"); if (nb) { const [tp, cs] = nb.dataset.newbill.split("/"); return newBill(tp, cs); }
   const nm = t.closest("[data-newmov]"); if (nm) { const [cs, tp] = nm.dataset.newmov.split("/"); return movForm(null, { casa: cs || "casa1", tipo: tp || "casa", categoria: tp === "tari" ? todayISO().slice(0, 4) : undefined }); }
   if (t.closest("[data-newprom]")) return promForm();
+  const gl = t.closest("[data-guide]"); if (gl) return showGuide(gl.dataset.guide);
   const vg = garageClick(t, e); if (vg !== undefined) return vg;
   const tp = t.closest("[data-tipo]"); if (tp) { Q.tipo = tp.dataset.tipo; return render(); }
   const act = t.closest("[data-act]");
@@ -1291,7 +1294,7 @@ function showSetup(msg) {
       <label class="full">Indirizzo dello script<input id="s-url" value="${esc(S.cfg.url)}" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" autocapitalize="off"></label>
       <label class="full">Chiave segreta<input id="s-key" type="password" value="${esc(S.cfg.key)}" autocomplete="off" autocapitalize="off"></label>
       <button class="btn primary full">Collega</button></form>
-    <button class="btn" data-act="guida">Prima volta? Leggi la guida</button>`);
+    <button class="btn" data-act="guida">Prima volta? Leggi la guida · Guide</button>`);
   $("#setup").onsubmit = e => { e.preventDefault(); const url = val("s-url"), key = val("s-key");
     if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(url)) return toast("L'indirizzo deve iniziare con https://script.google.com/macros/s/ e finire con /exec");
     if (key.length < 8) return toast("La chiave deve avere almeno 8 caratteri");
