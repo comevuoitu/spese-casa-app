@@ -28,7 +28,7 @@ Chi gestisce l'app non vede i tuoi dati. I tuoi dati stanno solo sul tuo Drive.
 
 - Un account Google (Gmail va benissimo).
 - Un computer con un browser, per i passi 1 e 2. Il telefono basta dal passo 3 in poi.
-- L'indirizzo dell'app. Te lo dà chi ti ha mandato il kit; ha una forma come `https://NOMEUTENTE.github.io/spese-casa-app/`. Se vuoi pubblicare l'app per conto tuo, segui prima "Pubblicare l'app su GitHub Pages".
+- L'indirizzo dell'app: `https://comevuoitu.github.io/spese-casa-app/`. Se chi ti ha dato il kit ti ha indicato un altro indirizzo, usa quello. Se vuoi pubblicare l'app per conto tuo, segui prima "Pubblicare l'app su GitHub Pages".
 - Circa 15 minuti.
 
 ## Passo 1: crea lo script nel tuo account Google
@@ -73,7 +73,7 @@ Chi gestisce l'app non vede i tuoi dati. I tuoi dati stanno solo sul tuo Drive.
 
 ## Passo 3: collega l'app e inizia
 
-1. Sul telefono o sul computer apri l'indirizzo dell'app, per esempio `https://NOMEUTENTE.github.io/spese-casa-app/`.
+1. Sul telefono o sul computer apri l'indirizzo dell'app: `https://comevuoitu.github.io/spese-casa-app/` (o quello che ti hanno indicato).
 2. Compare la schermata **Collega Google Drive**.
    - In **Indirizzo dello script** incolla l'URL che finisce con `/exec`.
    - In **Chiave segreta** scrivi la chiave del passo 1, identica (maiuscole e minuscole contano).
