@@ -1,0 +1,35 @@
+{
+ "versione": 1,
+ "aggiornato": "2026-11-24T00:00:00.000Z",
+ "movimenti": [],
+ "gestioni": [],
+ "promemoria": [],
+ "conti": [],
+ "config": {
+  "immobili": {
+   "casa1": {
+    "nome": "Casa",
+    "indirizzo": "",
+    "dettagli": ""
+   },
+   "box1": {
+    "nome": "Box",
+    "indirizzo": "",
+    "dettagli": ""
+   }
+  },
+  "detrazioni": [],
+  "detrazioniTitolo": "Detrazioni",
+  "box": true,
+  "veicoli": true
+ },
+ "garage": {
+  "vehicles": [],
+  "items": [],
+  "kmMensili": [],
+  "patenti": [],
+  "flags": {
+   "mig14": true
+  }
+ }
+}
