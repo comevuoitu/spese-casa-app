@@ -1,6 +1,6 @@
 # Spese di casa: guida per iniziare
 
-Versione della guida: 1.6.2. Vale per l'app 1.6.2 e per lo script `Code.gs` 1.6. English version: `GUIDE.md` (in the app: Impostazioni, "Guida", then "English").
+Versione della guida: 1.7.1. Vale per l'app 1.7.1 e per lo script `Code.gs` 1.6. English version: `GUIDE.md` (in the app: Impostazioni, "Guida", then "English").
 
 Questa guida è scritta per essere seguita da una persona oppure da un assistente AI che aiuta una persona. Ogni passaggio dice cosa fare, cosa si deve vedere alla fine e cosa fare se non succede. I nomi dei pulsanti sono scritti come compaiono sullo schermo, in italiano e, tra parentesi, in inglese, perché Google può mostrare l'una o l'altra lingua.
 
@@ -103,7 +103,7 @@ L'app funziona anche nel browser, ma installata si apre come un'app normale, a s
 ## Primi passi nell'app
 
 - **Condominio:** in Home tocca **Casa** (o **Box**), poi **Nuova gestione**. Scrivi il nome (es. `2026-27`), il tipo e le voci del preventivo, una per riga nella forma `voce | importo`. Poi, dentro la gestione, **Aggiungi rata** per ogni rata. Quando arriva il riparto, **Aggiorna consuntivo**.
-- **Bollette:** in Home tocca luce, gas o internet, poi **Nuova bolletta**.
+- **Bollette:** in Home tocca luce, gas o internet, poi **Nuova bolletta**. Per luce e gas, il riquadro in alto mostra quanto ti è costato in media un kWh (o un Smc) nell'ultimo mese, calcolato sul totale della bolletta; toccandolo si apre il grafico dell'andamento.
 - **TARI, IMU, lavori, cose da chiedere:** dalle tessere in Home.
 - **Pagare una rata o una bolletta:** tocca **Pagata** accanto alla voce.
 - **Scadenze:** la scheda **Scadenze** in basso mostra cosa è scaduto e cosa scade entro 30 giorni.

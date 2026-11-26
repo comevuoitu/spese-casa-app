@@ -1,6 +1,6 @@
 # Spese di casa: getting started guide
 
-Guide version: 1.6.2. It applies to app version 1.6.2 and to the `Code.gs` script version 1.6. Versione italiana: `GUIDA.md` (nell'app: Impostazioni, "Guida").
+Guide version: 1.7.1. It applies to app version 1.7.1 and to the `Code.gs` script version 1.6. Versione italiana: `GUIDA.md` (nell'app: Impostazioni, "Guida").
 
 This guide is written to be followed by a person or by an AI assistant helping a person. Each step says what to do, what you should see at the end, and what to do if that does not happen.
 
@@ -107,7 +107,7 @@ The app also works in the browser, but once installed it opens like a normal app
 The bottom tab bar has **Home**, **Scadenze** (Deadlines), **Movimenti** (Transactions) and **Impostazioni** (Settings).
 
 - **Condominium:** on Home tap **Casa** (or **Box**), then **Nuova gestione** (New financial year). Enter the name (e.g. `2026-27`), the type and the budget lines, one per line in the form `item | amount`. Then, inside the year, use **Aggiungi rata** (Add instalment) for each instalment. When the final statement arrives, use **Aggiorna consuntivo** (Update final statement).
-- **Bills:** on Home tap electricity (Luce), gas (Gas) or internet (Internet), then **Nuova bolletta** (New bill).
+- **Bills:** on Home tap electricity (Luce), gas (Gas) or internet (Internet), then **Nuova bolletta** (New bill). For electricity and gas, the box at the top shows the average cost of one kWh (or Smc) in the last month, computed on the whole bill; tap it to open the trend chart.
 - **Local taxes, works, things to ask:** from the Home tiles (Tasse, Lavori, Da chiedere).
 - **Mark something as paid:** tap **Pagata** (Paid) next to it.
 - **Deadlines:** the **Scadenze** tab shows what is overdue and what is due within 30 days.

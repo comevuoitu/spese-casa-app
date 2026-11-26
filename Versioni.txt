@@ -2,6 +2,16 @@ SPESE DI CASA - STORICO DELLE VERSIONI
 
 Accanto a ogni versione è indicato se va aggiornato anche lo script su Google (Code.gs).
 
+1.7.1 (26/11/2026)
+- Convivenza con altre app sullo stesso dominio (per esempio un'altra app su comevuoitu.github.io): l'app ora cancella solo la propria copia salvata sul dispositivo, non quella delle altre app.
+- Script Google: non serve aggiornarlo (resta la versione 1.6).
+
+1.7 (25/11/2026)
+- Luce e gas: in alto un riquadro con il costo medio al kWh (o al Smc) dell'ultimo mese, calcolato sul totale della bolletta (energia, trasporto, oneri, imposte e IVA) diviso per il consumo, con il confronto sulla media dei 12 mesi.
+- Toccando il riquadro si apre il grafico dell'andamento del costo al kWh (o al Smc) bolletta per bolletta, con la media dei 12 mesi e l'elenco delle bollette. Le bollette con un consumo troppo basso per dare un prezzo sensato restano nell'elenco ma non nel grafico e nelle medie.
+- Corrette le etichette dei mesi che si sovrapponevano alla fine del grafico delle bollette.
+- Script Google: non serve aggiornarlo (resta la versione 1.6).
+
 1.6.2 (25/11/2026)
 - Guida in due lingue: italiano e inglese. Nell'app, in Impostazioni, "Guida", si sceglie la lingua in alto; all'apertura si usa la lingua del dispositivo.
 - Nel kit: GUIDA.md (italiano) e GUIDE.md (inglese). README del repository GitHub in inglese.

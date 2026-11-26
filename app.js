@@ -2,7 +2,7 @@
 /* Spese di casa: PWA. Data live in Google Drive (dati.json) through a personal Apps Script; a Google Sheet copy is rebuilt after each change. */
 
 // ---------------------------------------------------------------- config & state
-const VERSION = "1.6.2";
+const VERSION = "1.7.1";
 const LS = { cfg: "spese.cfg", cache: "spese.cache" };
 const TEST = window.SPESE_TEST || null;
 
@@ -440,7 +440,7 @@ ROUTES.utenza = arg => {
     chart = `<div class="chart"><svg viewBox="0 0 ${W} ${Hh + 22}">
       ${[0.5, 1].map(f => `<line x1="0" x2="${W}" y1="${Hh - Hh * f / 1.15}" y2="${Hh - Hh * f / 1.15}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="2" y="${Hh - Hh * f / 1.15 - 3}">${Math.round(max / 1.15 * f)} €</text>`).join("")}
       ${ch.map((b, i) => { const h = vals[i] / max * Hh; const lastB = i === ch.length - 1; return `<rect x="${i * bw + bw * 0.18}" y="${Hh - h}" width="${bw * 0.64}" height="${h}" rx="3" fill="${lastB ? "var(--accent)" : "color-mix(in srgb, var(--accent) 45%, transparent)"}"><title>${dmy(b.dal)}: ${eur(b.importo)}</title></rect>`; }).join("")}
-      ${ch.map((b, i) => (i % 3 === 0 || i === ch.length - 1) ? `<text x="${i === 0 ? 2 : i === ch.length - 1 ? W - 2 : i * bw + bw / 2}" y="${Hh + 15}" text-anchor="${i === 0 ? "start" : i === ch.length - 1 ? "end" : "middle"}">${MESI[+b.dal.slice(5, 7) - 1]} ${b.dal.slice(2, 4)}</text>` : "").join("")}
+      ${ch.map((b, i) => ((i % 3 === 0 && ch.length - 1 - i >= 3) || i === ch.length - 1) ? `<text x="${i === 0 ? 2 : i === ch.length - 1 ? W - 2 : i * bw + bw / 2}" y="${Hh + 15}" text-anchor="${i === 0 ? "start" : i === ch.length - 1 ? "end" : "middle"}">${MESI[+b.dal.slice(5, 7) - 1]} ${b.dal.slice(2, 4)}</text>` : "").join("")}
     </svg><div class="small" style="padding:0 6px 6px">Costo ogni 30 giorni, ultime ${ch.length} bollette</div></div>`;
   }
   const seg = tipo === "luce" && hasBox() ? `<div class="seg" role="group"><button aria-pressed="${casa === "casa1"}" data-go="#utenza/luce/casa1">Casa</button><button aria-pressed="${casa === "box1"}" data-go="#utenza/luce/box1">Box (wallbox)</button></div>` : "";
@@ -450,11 +450,68 @@ ROUTES.utenza = arg => {
     <div class="hero"><div class="ill" style="background:${{ luce: "linear-gradient(160deg,#fff3cf,#fffaf0)", gas: "linear-gradient(160deg,#ffe4dc,#fff5f1)", internet: "linear-gradient(160deg,#e1f5ef,#f3fbf8)" }[tipo]}">${ART[art]}</div>
       <div><h2>${name}${tipo === "luce" ? (casa === "box1" ? " del box" : " di casa") : ""}</h2><div class="small">${bills[0] ? (bills[0].fornitore || "") + " · ultima " + eur(bills[0].importo) : "Nessuna bolletta"}</div></div></div>
     ${seg}
+    ${unit ? unitBox(tipo, casa, bills, unit) : ""}
     <div class="kpis"><div class="kpi"><span>Ogni 30 gg (12 mesi)</span><b class="num">${eur(per30)}</b></div><div class="kpi"><span>Nel ${yearNow}</span><b class="num">${eur(thisYear)}</b></div>
       <div class="kpi"><span>${unit ? "Consumo 12 mesi" : "Bollette"}</span><b class="num">${unit ? Math.round(cons12) + " " + unit : bills.length}</b></div></div>
     ${chart}
     <button class="btn primary block" data-newbill="${tipo}/${casa}">${IC.plus} Nuova bolletta</button>
     <div class="list">${bills.map(b => itemRow(b, { date: x => x.dal, sub: [b.dal && b.al ? dmy(b.dal) + " – " + dmy(b.al) : "", b.consumo != null && unit ? b.consumo + " " + unit : ""].filter(Boolean).join(" · ") })).join("")}</div>` };
+};
+
+// cost per unit (kWh or Smc) computed on the WHOLE bill: energy, transport, system charges, taxes and VAT, divided by consumption
+const unitBills = (tipo, casa) => M().filter(m => m.tipo === tipo && m.casa === casa && m.importo > 0 && m.consumo > 0 && (m.al || m.dal))
+  .sort((a, b) => (a.al || a.dal).localeCompare(b.al || b.dal)).map(b => Object.assign({}, b, { pu: b.importo / b.consumo }));
+const eurU = (n, unit) => n == null ? "–" : new Intl.NumberFormat("it-IT", { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(n) + " €/" + unit;
+const monthLabel = b => { const d = b.dal || b.al; const lab = MESI_L[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); return b.dal && b.al && daysBetween(b.dal, b.al) > 40 ? dmy(b.dal) + " – " + dmy(b.al) : lab; };
+function unitStats(tipo, casa) {
+  const raw = unitBills(tipo, casa); if (!raw.length) return null;
+  // a bill with almost no consumption (e.g. the first month of a new meter) gives a meaningless price: keep it in the list, not in the stats
+  const med = raw.map(b => b.pu).sort((a, b) => a - b)[Math.floor(raw.length / 2)];
+  const all = raw.filter(b => b.pu <= med * 3 && b.pu >= med / 3); const out = raw.filter(b => !all.includes(b));
+  if (!all.length) return null;
+  const last = all[all.length - 1];
+  const y = all.filter(b => daysTo(b.al || b.dal) > -365);
+  const avg12 = y.length ? sum(y, b => b.importo) / sum(y, b => b.consumo) : null;
+  return { all, raw, out, last, avg12, y };
+}
+function unitBox(tipo, casa, bills, unit) {
+  const st = unitStats(tipo, casa);
+  if (!st) return `<div class="small" style="margin:2px 0 10px">Per vedere il costo al ${unit} servono bollette con importo e consumo.</div>`;
+  const d = st.avg12 ? (st.last.pu / st.avg12 - 1) * 100 : null;
+  const trend = d == null || st.y.length < 2 ? "" : Math.abs(d) < 2 ? "in linea con la media dei 12 mesi" : `${d > 0 ? "+" : "−"}${nf(Math.abs(d), 0)}% rispetto alla media dei 12 mesi (${eurU(st.avg12, unit)})`;
+  return `<a class="ycard unitbox" href="#costounit/${tipo}/${casa}">
+    <div class="row1"><div><span class="k">Costo medio al ${unit} · ${esc(monthLabel(st.last))}</span><b class="num big">${eurU(st.last.pu, unit)}</b>
+    <div class="k">${esc(trend || "calcolato sul totale della bolletta")}</div></div>${IC.chev}</div></a>`;
+}
+ROUTES.costounit = arg => {
+  const [tipo, casaArg] = (arg || "luce").split("/"); const casa = casaArg || "casa1";
+  const unit = tipo === "gas" ? "Smc" : "kWh";
+  const st = unitStats(tipo, casa);
+  const who = tipo === "luce" ? (casa === "box1" ? "Luce del box" : "Luce di casa") : "Gas";
+  const seg = tipo === "luce" && hasBox() ? `<div class="seg" role="group"><button aria-pressed="${casa === "casa1"}" data-go="#costounit/luce/casa1">Casa</button><button aria-pressed="${casa === "box1"}" data-go="#costounit/luce/box1">Box (wallbox)</button></div>` : "";
+  if (!st) return { title: "Costo al " + unit, back: "utenza/" + tipo + (tipo === "luce" ? "/" + casa : ""), tab: "home", html: seg + emptyBox(tipo === "gas" ? "gas" : "luce", `Servono bollette con importo e consumo in ${unit}.`) };
+  const pts = st.all.slice(-24); const vals = pts.map(b => b.pu);
+  const lo = Math.min(...vals, st.avg12 || Infinity), hi = Math.max(...vals, st.avg12 || 0);
+  const pad = (hi - lo) * 0.15 || hi * 0.1, y0 = Math.max(0, lo - pad), y1 = hi + pad;
+  const W = 340, Hh = 150, L = 4, R = 4, X = i => pts.length === 1 ? W / 2 : L + i * (W - L - R) / (pts.length - 1), Y = v => Hh - (v - y0) / (y1 - y0) * (Hh - 10);
+  const path = pts.map((b, i) => `${i ? "L" : "M"}${X(i).toFixed(1)} ${Y(b.pu).toFixed(1)}`).join(" ");
+  const ticks = [y0 + (y1 - y0) * 0.25, y0 + (y1 - y0) * 0.75];
+  const step = Math.max(1, Math.ceil(pts.length / 6));
+  const chart = `<div class="chart"><svg viewBox="0 0 ${W} ${Hh + 24}">
+    ${ticks.map(v => `<line x1="0" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="2" y="${Y(v) - 3}">${nf(v, 2)} €</text>`).join("")}
+    ${st.avg12 ? `<line x1="0" x2="${W}" y1="${Y(st.avg12)}" y2="${Y(st.avg12)}" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="6 4"/>` : ""}
+    <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${pts.map((b, i) => `<circle cx="${X(i)}" cy="${Y(b.pu)}" r="${i === pts.length - 1 ? 5 : 3.2}" fill="${i === pts.length - 1 ? "var(--accent)" : "var(--surface)"}" stroke="var(--accent)" stroke-width="2"><title>${esc(monthLabel(b))}: ${eurU(b.pu, unit)}</title></circle>`).join("")}
+    ${pts.map((b, i) => (i % step === 0 || i === pts.length - 1) && !(i !== pts.length - 1 && pts.length - 1 - i < step) ? `<text x="${X(i)}" y="${Hh + 16}" text-anchor="${i === 0 ? "start" : i === pts.length - 1 ? "end" : "middle"}">${MESI[+(b.dal || b.al).slice(5, 7) - 1]} ${(b.dal || b.al).slice(2, 4)}</text>` : "").join("")}
+  </svg><div class="small" style="padding:0 6px 6px">€ per ${unit} di ogni bolletta, ultime ${pts.length}. La linea <span style="color:var(--warn);font-weight:700">tratteggiata arancione</span> è la media degli ultimi 12 mesi.${st.out.length ? ` Escluse dal grafico e dalle medie ${st.out.length === 1 ? "1 bolletta" : st.out.length + " bollette"} con consumo troppo basso per dare un prezzo sensato (${st.out.map(b => esc(monthLabel(b))).join(", ")}).` : ""}</div></div>`;
+  const mn = st.all.reduce((a, b) => b.pu < a.pu ? b : a), mx = st.all.reduce((a, b) => b.pu > a.pu ? b : a);
+  return { title: "Costo al " + unit, back: "utenza/" + tipo + (tipo === "luce" ? "/" + casa : ""), tab: "home", html: `
+    ${seg}
+    <div class="small" style="margin:0 0 10px">${esc(who)}: totale di ogni bolletta (energia, trasporto, oneri, imposte e IVA) diviso per i ${unit} consumati.</div>
+    <div class="kpis"><div class="kpi"><span>Ultimo mese, €/${unit}</span><b class="num">${nf(st.last.pu, 3)}</b></div><div class="kpi"><span>Media 12 mesi, €/${unit}</span><b class="num">${st.avg12 == null ? "–" : nf(st.avg12, 3)}</b></div>
+      <div class="kpi"><span>Min e max, €/${unit}</span><b class="num" style="font-size:15px">${nf(mn.pu, 3)} · ${nf(mx.pu, 3)}</b></div></div>
+    ${chart}
+    <div class="list">${st.raw.slice().reverse().map(b => `<div class="item" role="button" tabindex="0" data-edit="${esc(b.id)}">${calBox(b.dal || b.al)}<div><div class="t1">${esc(monthLabel(b))}</div><div class="t2">${eur(b.importo)} · ${nf(b.consumo, 1)} ${unit}${b.fornitore ? " · " + esc(b.fornitore) : ""}</div></div><div class="right"><span class="amt num">${eurU(b.pu, unit)}</span></div></div>`).join("")}</div>` };
 };
 
 ROUTES.scadenze = tab => {
